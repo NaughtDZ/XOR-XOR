@@ -53,36 +53,55 @@
             Timer1.Enabled = False
         End If
     End Sub
-
+    ''' <summary>
+    ''' 对文件进行处理和调用加密
+    ''' </summary>
+    ''' <param name="config"></param>
     Private Sub Mainwork(config As Object()) 'filelocal As String, filesave As String, password As String
         Try
-            Dim fs As New IO.FileStream(config(0), IO.FileMode.Open) '读
+
             Dim fsave As New IO.FileStream(config(1), IO.FileMode.Create) '写
-            Dim bynow As Byte, byenkey As Byte
-            Dim passwordbyt = System.Text.Encoding.Unicode.GetBytes(config(2)), passwordbyte_count As Integer, password_now_byte As Integer = 0 '密码大于一个字节的话，得换着字节去对应文件字节加密
-            passwordbyte_count = passwordbyt.Length - 1
-            For i = 0 To fs.Length - 1
-                bynow = fs.ReadByte()
-                byenkey = BitConverter.GetBytes(bynow Xor passwordbyt(password_now_byte))(0) 'XOR加密/解密操作，加转换防止溢出BUG
-                If password_now_byte < passwordbyte_count Then
-                    password_now_byte += 1
+            Dim fs As Byte(), opened_file As IO.FileStream
+            Dim split_procce As New Xor_work
+            opened_file = IO.File.OpenRead(config(0))
+            If opened_file.Length > 8 Then
+                If opened_file.Length Mod 8 = 0 Then
+                    For x = 0 To 7
+                        Dim parameter() As Object = {1, 1, 1, 1}
+                        split_procce(Add
+                    Next
+                    For i = 0 To opened_file.Length - 7 Step opened_file.Length / 8 '分8组，但是最后一组只要从开头就ok，所以要减去后面的
+
+
+                    Next
                 Else
-                    password_now_byte = 0
+
                 End If
-                fsave.WriteByte(byenkey)
-            Next
+            End If
+            '------------------------------------老的单线程处理
+            'Dim fs As New IO.FileStream(config(0), IO.FileMode.Open) '读
+            'Dim bynow As Byte, byenkey As Byte
+            'Dim passwordbyt = System.Text.Encoding.Unicode.GetBytes(config(2)), passwordbyte_count As Integer, password_now_byte As Integer = 0 '密码大于一个字节的话，得换着字节去对应文件字节加密
+            'passwordbyte_count = passwordbyt.Length - 1
+            'For i = 0 To fs.Length - 1
+            'bynow = fs.ReadByte()
+            'byenkey = BitConverter.GetBytes(bynow Xor passwordbyt(password_now_byte))(0) 'XOR加密/解密操作，加转换防止溢出BUG
+            'If password_now_byte < passwordbyte_count Then
+            'password_now_byte += 1
+            'Else
+            'password_now_byte = 0
+            'End If
+            'fsave.WriteByte(byenkey)
+            'Next
+            '-----------------------------------
             fsave.Close()
             fsave.Dispose()
-            fs.Close()
-            fs.Dispose()
             ProgressBar1.Value += 1
         Catch e As Exception
             Debug.WriteLine(e.ToString)
             Exit Sub
         End Try
     End Sub
-
-
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         If TextBox2.Text = "" Then
@@ -107,6 +126,30 @@
         End If
     End Sub
 End Class
-
-
+''' <summary>
+''' 曲线救国的多线程分段xor加密，方便获得处理结果
+''' </summary>
+Class Xor_work
+    Dim main_result As ArrayList
+    ''' <summary>
+    ''' XOR加密过程
+    ''' </summary>
+    ''' <returns>返回的是加密后的字节组</returns>
+    Function xor_working(bystar As Long, count As Long, fs As Byte(), password As String) As ArrayList
+        Dim passwordbyt = System.Text.Encoding.Unicode.GetBytes(password), passwordbyte_count As Integer, password_now_byte As Integer = 0 '密码大于一个字节的话，得换着字节去对应文件字节加密
+        Dim byenkey As Byte, result As ArrayList
+        passwordbyte_count = passwordbyt.Length - 1
+        For i = 0 To count '拆分工作和计数工作应该在主任务里就完成了，在子线程拆分会导致爆内存?
+            byenkey = BitConverter.GetBytes(fs(i) Xor passwordbyt(password_now_byte))(0) 'XOR加密/解密操作，加转换防止溢出BUG
+            If password_now_byte < passwordbyte_count Then
+                password_now_byte += 1
+            Else
+                password_now_byte = 0
+            End If
+            result.Add(byenkey)
+            main_result = result
+        Next
+        Return result '本函数是为了上门的拆分的
+    End Function
+End Class
 
