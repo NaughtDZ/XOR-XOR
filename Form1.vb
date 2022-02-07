@@ -1,14 +1,6 @@
 ﻿Public Class Form1
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-    End Sub
-
-    Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles Me.Resize
-        'Label1.Size = Me.ClientSize - New Size(Label1.Location)
-        'Button3.Size = Me.ClientSize - New Size(Button3.Location)
-        'ListBox1.Size = Me.ClientSize - New Size(ListBox1.Location)
-        'ProgressBar1.Size = Me.ClientSize - New Size(ProgressBar1.Location)
-        'ProgressBar2.Size = Me.ClientSize - New Size(ProgressBar2.Location)
+        CheckForIllegalCrossThreadCalls = False '我知道其中的风险，只是这个程序不需要那么多花里胡哨的东西
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
@@ -43,7 +35,7 @@
 
     Private Sub ListBox1_MouseUp(sender As Object, e As MouseEventArgs) Handles ListBox1.MouseUp
         Timer1.Enabled = True '兜一圈子就是为了双击清除列表
-        Debug.WriteLine(listrightdulclick)
+        'Debug.WriteLine(listrightdulclick)
         If e.Button = MouseButtons.Right And listrightdulclick > 0 Then
             ListBox1.Items.Clear()
         ElseIf e.Button <> MouseButtons.Right Then
@@ -55,37 +47,35 @@
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         listrightdulclick += 1 'vb.net没有右键双击事件？？？
-        Debug.WriteLine(listrightdulclick)
-        If listrightdulclick >= 4 Then
+        ' Debug.WriteLine(listrightdulclick)
+        If listrightdulclick >= 5 Then
             listrightdulclick = 0
             Timer1.Enabled = False
         End If
     End Sub
 
-    Private Sub Mainwork(filelocal As String, filesave As String, password As String)
+    Private Sub Mainwork(config As Object()) 'filelocal As String, filesave As String, password As String
         Try
-            Dim fs As New IO.FileStream(filelocal, IO.FileMode.Open) '读
-            Dim fsave As New IO.FileStream(filesave, IO.FileMode.Create) '写
+            Dim fs As New IO.FileStream(config(0), IO.FileMode.Open) '读
+            Dim fsave As New IO.FileStream(config(1), IO.FileMode.Create) '写
             Dim bynow As Byte, byenkey As Byte
-            Dim passwordbyt = System.Text.Encoding.Unicode.GetBytes(password), passwordbyte_count As Integer, password_now_byte As Integer = 0 '密码大于一个字节的话，得换着字节去对应文件字节加密
+            Dim passwordbyt = System.Text.Encoding.Unicode.GetBytes(config(2)), passwordbyte_count As Integer, password_now_byte As Integer = 0 '密码大于一个字节的话，得换着字节去对应文件字节加密
             passwordbyte_count = passwordbyt.Length - 1
-            ProgressBar2.Value = 0
-            ProgressBar2.Maximum = fs.Length '进度条
             For i = 0 To fs.Length - 1
                 bynow = fs.ReadByte()
                 byenkey = BitConverter.GetBytes(bynow Xor passwordbyt(password_now_byte))(0) 'XOR加密/解密操作，加转换防止溢出BUG
                 If password_now_byte < passwordbyte_count Then
                     password_now_byte += 1
                 Else
-                    passwordbyte_count = 0
+                    password_now_byte = 0
                 End If
                 fsave.WriteByte(byenkey)
-                ProgressBar2.Value += 1
             Next
             fsave.Close()
             fsave.Dispose()
             fs.Close()
             fs.Dispose()
+            ProgressBar1.Value += 1
         Catch e As Exception
             Debug.WriteLine(e.ToString)
             Exit Sub
@@ -109,8 +99,10 @@
                 Else
                     xorfile = Replace(files.ToString, "(_Xor_)", "",,, CompareMethod.Text)
                 End If
-                Mainwork(files, xorfile, TextBox2.Text)
-                ProgressBar1.Value += 1
+                Dim config As Object() = New Object(2) {files, xorfile, TextBox2.Text}
+                Threading.ThreadPool.QueueUserWorkItem(AddressOf Mainwork, config)
+                ' Mainwork(config)
+                ' ProgressBar1.Value += 1
             Next
         End If
     End Sub
