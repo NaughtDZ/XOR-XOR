@@ -22,5 +22,23 @@
   resource lookups using this strongly typed resource class.
 </summary>
 </member>
+<member name="M:加加加密密密.Form1.Mainwork(System.Object[])">
+ <summary>
+ 对文件进行处理和调用加密
+ </summary>
+ <param name="config"> 'filelocal As String, filesave As String, password As String</param>
+</member>
+<member name="T:加加加密密密.Xor_work">
+ <summary>
+ 曲线救国的多线程分段xor加密，方便获得处理结果
+ </summary>
+</member>
+<member name="M:加加加密密密.Xor_work.xor_working(System.Object[])">
+ <summary>
+ XOR加密过程
+ </summary>
+ <param name="paramer"> count As Long, x3 As Byte(), password As String</param>
+ <returns>返回的是加密后的字节组</returns>
+</member>
 </members>
 </doc>

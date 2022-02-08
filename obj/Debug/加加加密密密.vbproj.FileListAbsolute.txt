@@ -9,3 +9,14 @@ F:\BaiduNetdiskDownload\Programe\XOR-XOR-master\obj\Debug\加加加密密密.vbp
 F:\BaiduNetdiskDownload\Programe\XOR-XOR-master\obj\Debug\加加加密密密.exe
 F:\BaiduNetdiskDownload\Programe\XOR-XOR-master\obj\Debug\加加加密密密.xml
 F:\BaiduNetdiskDownload\Programe\XOR-XOR-master\obj\Debug\加加加密密密.pdb
+G:\Doc\Programing\加加加密密密\加加加密密密\bin\Debug\加加加密密密.exe
+G:\Doc\Programing\加加加密密密\加加加密密密\bin\Debug\加加加密密密.pdb
+G:\Doc\Programing\加加加密密密\加加加密密密\bin\Debug\加加加密密密.xml
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.vbproj.AssemblyReference.cache
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.Form1.resources
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.Resources.resources
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.vbproj.GenerateResource.cache
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.vbproj.CoreCompileInputs.cache
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.exe
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.xml
+G:\Doc\Programing\加加加密密密\加加加密密密\obj\Debug\加加加密密密.pdb
