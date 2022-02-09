@@ -79,7 +79,7 @@ Public Class Form1
                                                                                             '-==-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                                                                                         End Sub)
                 Dim timer_finish As Threading.Timer = New Threading.Timer(New Threading.TimerCallback(Sub() '判断是否处理完成，上面的是多线程的
-                                                                                                          If ProgressBar1.Value = ProgressBar1.Maximum Then
+                                                                                                          If muti_process.IsCompleted = True Then
                                                                                                               Threading.ThreadPool.QueueUserWorkItem(Sub()
                                                                                                                                                          IO.File.WriteAllBytes(config(1), all_byte)
                                                                                                                                                      End Sub)
